@@ -1,8 +1,11 @@
 import React from "react";
 import { useConfigurator } from "../context/ConfiguratorContext";
+import { usePreview } from "../context/PreviewContext";
+import ImageUpload from "./ImageUpload";
 
 const OutdoorPreview: React.FC = () => {
   const { config } = useConfigurator();
+  const { previewImage } = usePreview();
   const [poleHeight, setPoleHeight] = React.useState(280); // Default height in pixels
 
   // Calculate display dimensions in meters for visualization
@@ -41,6 +44,9 @@ const OutdoorPreview: React.FC = () => {
       </h2>
 
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        {/* Image Upload */}
+        <ImageUpload />
+
         {/* Pole Height Control */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -140,6 +146,22 @@ const OutdoorPreview: React.FC = () => {
                 )
               )}
             </div>
+
+            {/* Preview Image */}
+            {previewImage && (
+              <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

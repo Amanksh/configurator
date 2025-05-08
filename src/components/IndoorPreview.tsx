@@ -1,57 +1,71 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useConfigurator } from "../context/ConfiguratorContext"
+import React from "react";
+import { useConfigurator } from "../context/ConfiguratorContext";
+import { usePreview } from "../context/PreviewContext";
+import ImageUpload from "./ImageUpload";
 
 const IndoorPreview: React.FC = () => {
-  const { config, setRoomDimensions } = useConfigurator()
+  const { config, setRoomDimensions } = useConfigurator();
+  const { previewImage } = usePreview();
 
   // Make sure roomWidth and roomHeight have values
-  const roomWidth = config.roomWidth || 5 // default 5 meters
-  const roomHeight = config.roomHeight || 3 // default 3 meters
+  const roomWidth = config.roomWidth || 5; // default 5 meters
+  const roomHeight = config.roomHeight || 3; // default 3 meters
 
   // Calculate display dimensions in meters for visualization
-  const displayWidthM = config.width / 1000 // mm to meters
-  const displayHeightM = config.height / 1000 // mm to meters
+  const displayWidthM = config.width / 1000; // mm to meters
+  const displayHeightM = config.height / 1000; // mm to meters
 
   // Check if display exceeds room dimensions
-  const exceedsRoomWidth = displayWidthM > roomWidth
-  const exceedsRoomHeight = displayHeightM > roomHeight
+  const exceedsRoomWidth = displayWidthM > roomWidth;
+  const exceedsRoomHeight = displayHeightM > roomHeight;
 
   // Scale for visualization (1 meter = x pixels in our visualization)
-  const scaleFactor = 100
+  const scaleFactor = 100;
 
   // Calculate positions
-  const roomWidthPx = roomWidth * scaleFactor
-  const roomHeightPx = roomHeight * scaleFactor
-  const displayWidthPx = displayWidthM * scaleFactor
-  const displayHeightPx = displayHeightM * scaleFactor
+  const roomWidthPx = roomWidth * scaleFactor;
+  const roomHeightPx = roomHeight * scaleFactor;
+  const displayWidthPx = displayWidthM * scaleFactor;
+  const displayHeightPx = displayHeightM * scaleFactor;
 
   // Calculate cabinet grid
-  const cabinetSize = config.type === "indoor" ? 576 : 960 // in mm
-  const cabinetsWide = Math.ceil(config.width / cabinetSize)
-  const cabinetsHigh = Math.ceil(config.height / cabinetSize)
+  const cabinetSize = 500; // in mm for indoor
+  const cabinetsWide = Math.ceil(config.width / cabinetSize);
+  const cabinetsHigh = Math.ceil(config.height / cabinetSize);
 
   // Handle room dimension changes
   const handleRoomWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const width = Number.parseFloat(e.target.value)
-    setRoomDimensions(width, roomHeight)
-  }
+    const width = Number.parseFloat(e.target.value);
+    setRoomDimensions(width, roomHeight);
+  };
 
   const handleRoomHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const height = Number.parseFloat(e.target.value)
-    setRoomDimensions(roomWidth, height)
-  }
+    const height = Number.parseFloat(e.target.value);
+    setRoomDimensions(roomWidth, height);
+  };
 
   return (
-    <div className={`mb-8 ${!config.pixelPitch ? "opacity-50 pointer-events-none" : ""}`}>
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Indoor Preview</h2>
+    <div
+      className={`mb-8 ${
+        !config.pixelPitch ? "opacity-50 pointer-events-none" : ""
+      }`}
+    >
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+        Indoor Preview
+      </h2>
 
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        {/* Image Upload */}
+        <ImageUpload />
+
         <div className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Room Width (m)</label>
+              <label className="block text-sm font-medium mb-2">
+                Room Width (m)
+              </label>
               <div className="flex items-center">
                 <input
                   type="range"
@@ -62,12 +76,16 @@ const IndoorPreview: React.FC = () => {
                   onChange={handleRoomWidthChange}
                   className="w-full mr-4"
                 />
-                <span className="w-16 text-right">{roomWidth.toFixed(1)} m</span>
+                <span className="w-16 text-right">
+                  {roomWidth.toFixed(1)} m
+                </span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Room Height (m)</label>
+              <label className="block text-sm font-medium mb-2">
+                Room Height (m)
+              </label>
               <div className="flex items-center">
                 <input
                   type="range"
@@ -78,7 +96,9 @@ const IndoorPreview: React.FC = () => {
                   onChange={handleRoomHeightChange}
                   className="w-full mr-4"
                 />
-                <span className="w-16 text-right">{roomHeight.toFixed(1)} m</span>
+                <span className="w-16 text-right">
+                  {roomHeight.toFixed(1)} m
+                </span>
               </div>
             </div>
           </div>
@@ -105,7 +125,9 @@ const IndoorPreview: React.FC = () => {
             >
               {/* Room dimensions */}
               <div className="absolute -top-6 left-0 w-full flex justify-center">
-                <span className="bg-blue-100 px-2 py-1 rounded text-sm">Width: {roomWidth.toFixed(1)}m</span>
+                <span className="bg-blue-100 px-2 py-1 rounded text-sm">
+                  Width: {roomWidth.toFixed(1)}m
+                </span>
               </div>
               <div className="absolute -right-16 top-0 h-full flex items-center">
                 <span className="bg-blue-100 px-2 py-1 rounded text-sm transform rotate-90">
@@ -122,7 +144,11 @@ const IndoorPreview: React.FC = () => {
 
               {/* LED Display with cabinet grid */}
               <div
-                className={`absolute bg-black shadow-xl ${exceedsRoomWidth || exceedsRoomHeight ? "border-2 border-red-500" : ""}`}
+                className={`absolute bg-black shadow-xl ${
+                  exceedsRoomWidth || exceedsRoomHeight
+                    ? "border-2 border-red-500"
+                    : ""
+                }`}
                 style={{
                   width: `${displayWidthPx}px`,
                   height: `${displayHeightPx}px`,
@@ -148,19 +174,37 @@ const IndoorPreview: React.FC = () => {
                     gridTemplateRows: `repeat(${cabinetsHigh}, 1fr)`,
                   }}
                 >
-                  {Array.from({ length: cabinetsWide * cabinetsHigh }).map((_, i) => (
-                    <div key={i} className="bg-black">
-                      <div className="w-full h-full border border-gray-700 bg-gradient-to-br from-gray-800 to-black"></div>
-                    </div>
-                  ))}
+                  {Array.from({ length: cabinetsWide * cabinetsHigh }).map(
+                    (_, i) => (
+                      <div key={i} className="bg-black">
+                        <div className="w-full h-full border border-gray-700 bg-gradient-to-br from-gray-800 to-black"></div>
+                      </div>
+                    )
+                  )}
                 </div>
+
+                {/* Preview Image */}
+                {previewImage && (
+                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default IndoorPreview
+export default IndoorPreview;

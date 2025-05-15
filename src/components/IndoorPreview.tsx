@@ -31,7 +31,7 @@ const IndoorPreview: React.FC = () => {
   const displayHeightPx = displayHeightM * scaleFactor;
 
   // Calculate cabinet grid
-  const cabinetSize = 500; // in mm for indoor
+  const cabinetSize = 576; // in mm for indoor
   const cabinetsWide = Math.ceil(config.width / cabinetSize);
   const cabinetsHigh = Math.ceil(config.height / cabinetSize);
 

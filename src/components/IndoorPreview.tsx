@@ -196,6 +196,27 @@ const IndoorPreview: React.FC = () => {
                         objectFit: "cover",
                       }}
                     />
+                    {/* Grid Overlay */}
+                    <div className="absolute inset-0 grid gap-0.5 pointer-events-none">
+                      {Array.from({ length: cabinetsWide - 1 }).map((_, i) => (
+                        <div
+                          key={`v-${i}`}
+                          className="absolute top-0 bottom-0 border-l border-white/50"
+                          style={{
+                            left: `${((i + 1) * 100) / cabinetsWide}%`,
+                          }}
+                        />
+                      ))}
+                      {Array.from({ length: cabinetsHigh - 1 }).map((_, i) => (
+                        <div
+                          key={`h-${i}`}
+                          className="absolute left-0 right-0 border-t border-white/50"
+                          style={{
+                            top: `${((i + 1) * 100) / cabinetsHigh}%`,
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
